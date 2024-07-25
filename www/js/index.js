@@ -83,13 +83,18 @@ function getUiElements() {
     return { fileInput, textInput, algorithmSelect, dataSelect, methodSelect, output, outputInfo, generateButton, settingsDescription, settingsLink };
 }
 
+function displayError(error, { output, outputInfo, generateButton }) {
+    output.textContent = '';
+    outputInfo.textContent = error;
+    outputInfo.classList.add("error");
+    generateButton.disabled = false;
+}
+
 function displayOutput(digest, inputName, duration, ui) {
     const { generateButton, methodSelect, algorithmSelect, output, outputInfo } = ui;
     // Update the output
     if (digest.startsWith('Error:')) {
-        output.textContent = '';
-        outputInfo.textContent = digest;
-        outputInfo.classList.add("error");
+        displayError(digest, ui);
         return;
     }
     output.textContent = digest;
@@ -141,12 +146,17 @@ async function generateHash(event) {
     });
     reader.addEventListener('error', () => {
         const error = reader.error;
-        outputInfo.textContent = `${error.name} ${error.message}`;
+        displayError(`${error.name}: ${error.message}`, ui);
     });
     reader.addEventListener('abort', () => {
         outputInfo.textContent = `Cancelled`;
     });
-    reader.readAsArrayBuffer(file);
+    try {
+        reader.readAsArrayBuffer(file);
+    } catch (error) {
+        displayError(`${error.name}: ${error.message}`, ui);
+    }
+
 }
 
 function buildSelect(select, items) {
