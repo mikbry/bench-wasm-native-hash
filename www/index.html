@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bench WASM Hash</title>
+    <link rel="stylesheet" href="./simple.min.css" />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+
+  <body>
+        <header><h1>Bench WASM Hash</h1></header>
+        <main class="">
+          <form class="grid">
+            <div class="column-1 h-full">
+              <fieldset class="flex-col">
+                <legend>Input</legend>
+                <textarea
+                  id="textInput"
+                  placeholder="Input some text..."
+                ></textarea>
+                <div class="flex-row">
+                  <input type="file" class="grow" id="fileInput" />
+                  <button class="" id="generateButton">Generate Hash</button>
+                </div>
+                <p class="notice">
+                  <span id="inputDescription">
+                    Choose between importing a file or writing in text input.
+                    All processing will be done on your machine, nothing will be
+                    uploaded to a server. Large files need Stream settings to be
+                    set.</span
+                  >
+                </p>
+              </fieldset>
+              <fieldset class="flex-col">
+                <legend>Settings</legend>
+                <div class="flex-row">
+                  <select class="" id="methodSelect">
+                    <option value="JS">JS Web Crypto API</option>
+                    <option value="WASM-Bindgen">WASM-Bindgen</option>
+                    <option value="WASM">WASM</option>
+                  </select>
+                  <select class="" id="algorithmSelect">
+                    <option value="sha-1">SHA-1</option>
+                    <option value="sha-256">SHA-256</option>
+                    <option value="sha-384">SHA-384</option>
+                    <option value="sha-512">SHA-512</option>
+                    <option value="md5">MD5</option>
+                  </select>
+                  <select class="" id="dataSelect">
+                    <option value="Bytes">Bytes</option>
+                    <option value="ArrayBuffer">ArrayBuffer</option>
+                    <option value="SharedBuffer">SharedBuffer</option>
+                    <option value="Stream">Stream</option>
+                  </select>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="webworker"
+                      name="webworker"
+                      role="switch"
+                      checked
+                    />
+                    <label for="webworker">Use Webworker</label>
+                  </div>
+                </div>
+                <p class="notice">
+                  <span id="settingsDescription"
+                    >Javascript Web Crypto API is the buildin interface allowing
+                    a script to use cryptographic functions. MD5 is not
+                    supported. Also streaming is not supported, so reading large
+                    files may fail.</span
+                  >
+                  <br />
+                  <a
+                    id="settingsLink"
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API"
+                    >More</a
+                  >
+                </p>
+              </fieldset>
+            </div>
+            <div class="column-1 h-full">
+              <fieldset class="flex-col h-full">
+                <legend>Output</legend>
+                <textarea
+                  placeholder="output waiting for you..."
+                  disabled
+                  id="output"
+                  class="grow"
+                ></textarea>
+                <p id="outputInfo" class="notice"></p>
+              </fieldset>
+            </div>
+          </form>
+        </main>
+      <footer>Coded by <a href="https://mikbry.com">Mik Bry</a></footer>
+    <script type="module" src="js/index.js"></script>
+  </body>
+</html>

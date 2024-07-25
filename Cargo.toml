@@ -1,0 +1,21 @@
+[package]
+name = "bench-wasm-native-hash"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+default-run = "bench-hash"
+
+[[bin]]
+bench = false
+path = "crates/cli/src/main.rs"
+name = "bench-hash"
+
+[dependencies]
+
+
+[workspace]
+members = [
+  "crates/*"
+]
