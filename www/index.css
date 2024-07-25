@@ -94,6 +94,10 @@ body > header h1 {
   color: var(--error) !important;
 }
 
+.disabled {
+  color: var(--text-light) !important;
+}
+
 input[type="file"] {
   margin: 0;
   padding: 0.4rem 1rem;
@@ -120,4 +124,24 @@ textarea {
 *:focus {
   outline: 1px solid var(--accent) !important;
   box-shadow: var(--accent) !important;
+}
+
+*[aria-label]:focus:after,
+*[aria-label]:hover:after {
+  position: absolute;
+  z-index: 1;
+  top: -2em;
+  left: 0;
+  display: block;
+  overflow: hidden;
+  width: max-content;
+  height: max-content;
+  border-radius: 0.2em;
+  padding: 0 0.7em;
+  content: attr(aria-label);
+  color: var(--accent-text);
+  background: var(--accent);
+  font-size: 1em;
+  line-height: 2em;
+  text-align: left;
 }

@@ -1,7 +1,8 @@
-import { hash, hashText, hello } from './utils.js';
+import { hash, hello } from './utils.js';
 
 const methods = {
     'JS': {
+        name: 'Js Web Crypto API',
         algorithms: [
             { text: "SHA-1", value: "sha-1" },
             { text: "SHA-256", value: "sha-256" },
@@ -10,7 +11,7 @@ const methods = {
             { text: "MD5", value: "md5" },
         ],
         data: [
-            { text: "ArrayBuffer", value: "ArrayBuffer" },
+            { text: "TypedArray", value: "TypedArray" },
         ],
         description: 'Javascript Web Crypto API is the buildin interface allowing a script to use cryptographic primitives in order to build systems using cryptography. MD5 is not supported. Also streaming is not supported, so reading large files file will failed.',
         link: 'https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API',
@@ -25,7 +26,7 @@ const methods = {
         ],
         data: [
             { text: "Bytes", value: "Bytes" },
-            { text: "ArrayBuffer", value: "ArrayBuffer" },
+            { text: "TypedArray", value: "TypedArray" },
             { text: "Stream", value: "Stream" },
         ],
         description: 'TODO: Implementing crypto using WASM Bindgen and Rust crypto functions.',
@@ -56,17 +57,16 @@ const methods = {
             { text: "MD5", value: "md5" },
         ],
         data: [
-            { text: "Bytes", value: "Bytes" },
-            { text: "ArrayBuffer", value: "ArrayBuffer" },
+            { text: "TypedArray", value: "TypedArray" },
             { text: "Stream", value: "Stream" },
         ],
-        description: 'TODO: Implementing crypto using Hash-WASM, Lightning fast hash functions using hand-tuned WebAssembly C.',
+        description: 'Hash done using Hash-WASM, Lightning fast hash functions using hand-tuned WebAssembly C.',
         link: 'https://mikbry.com/',
     },
 };
 
 const text = hello();
-const digest = await hashText(text);
+const digest = await hash(text);
 console.log(text, digest);
 
 function getUiElements() {
@@ -90,17 +90,17 @@ function displayError(error, { output, outputInfo, generateButton }) {
     generateButton.disabled = false;
 }
 
-function displayOutput(digest, inputName, duration, ui) {
+function displayOutput(digest, inputName, dataType, duration, ui) {
     const { generateButton, methodSelect, algorithmSelect, output, outputInfo } = ui;
     // Update the output
-    if (digest.startsWith('Error:')) {
+    if (digest.indexOf('Error') !== -1) {
         displayError(digest, ui);
         return;
     }
     output.textContent = digest;
 
     outputInfo.classList.remove("error");
-    outputInfo.textContent = `${algorithmSelect.selectedOptions[0].text} Hash generated from ${inputName} using ${methodSelect.selectedOptions[0].text} in ${duration} ms`;
+    outputInfo.textContent = `${algorithmSelect.selectedOptions[0].text} Hash generated from ${inputName} with ${dataType} using ${methodSelect.selectedOptions[0].text} in ${duration} ms`;
 
     generateButton.disabled = false;
 }
@@ -117,9 +117,9 @@ async function generateHash(event) {
     const start = performance.now();
     if (!file) {
         if (textInput.value) {
-            const digest = await hashText(textInput.value, algorithm, method, dataType);
+            const digest = await hash(textInput.value, algorithm, method, 'String');
             const end = performance.now();
-            displayOutput(digest, 'text', end - start, ui);
+            displayOutput(digest, 'input text', 'String', end - start, ui);
             return;
         }
         output.textContent = 'No Input available...';
@@ -131,12 +131,13 @@ async function generateHash(event) {
     output.textContent = 'Processing...';
     const reader = new FileReader();
     reader.addEventListener('load', async (event) => {
-        const data = new Uint8Array(event.target.result);
+        // let data = new Uint8Array(event.target.result);
+        let data = event.target.result;
         fileInput.value = null;
         fileInput.dispatchEvent(new Event('change'));
         const digest = await hash(data, algorithm, method, dataType);
         const end = performance.now();
-        displayOutput(digest, filename, end - start, ui);
+        displayOutput(digest, filename, dataType, end - start, ui);
     });
     reader.addEventListener('progress', (event) => {
         if (event.loaded && event.total) {
@@ -181,6 +182,8 @@ function initUI() {
     const ui = getUiElements();
     const { generateButton, methodSelect, algorithmSelect, dataSelect } = ui;
     generateButton.addEventListener('click', generateHash);
+    const methodOptions = Object.keys(methods).map((key) => ({ text: methods[key].name || key, value: key }));
+    buildSelect(methodSelect, methodOptions);
     resetSettings('JS', ui);
     methodSelect.addEventListener('change', () => {
         resetSettings(methodSelect.value, ui);

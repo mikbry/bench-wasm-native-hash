@@ -53,13 +53,14 @@
                     <option value="SharedBuffer">SharedBuffer</option>
                     <option value="Stream">Stream</option>
                   </select>
-                  <div>
+                  <div class="disabled">
                     <input
                       type="checkbox"
                       id="webworker"
                       name="webworker"
                       role="switch"
-                      checked
+                      disabled
+                      aria-label="Not implemented"
                     />
                     <label for="webworker">Use Webworker</label>
                   </div>
